@@ -1,0 +1,9 @@
+steps:
+  - name: Go version
+    command: go version
+  - name: List files
+    command: ls -la
+  - name: Say hello
+    command: echo hello from gopipe
+- name: Broken step
+    command: exit 1
