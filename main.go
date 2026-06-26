@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"time"
+
 
 	"gopkg.in/yaml.v3"
 )
@@ -35,17 +37,21 @@ func main() {
 	failed := false
 
 	for _, step := range pipeline.Steps {
-		fmt.Printf("▶ %s\n", step.Name)
+		fmt.Printf("▶ %s\n", step.Name) 
+
+		start := time.Now()
 
 		cmd := exec.Command("bash", "-c", step.Command)
 		output, err := cmd.CombinedOutput()
 		fmt.Println(string(output))
 
+		duration := time.Since(start)
+
 		if err != nil {
-			fmt.Printf("✗ %s\n", step.Name)
+			fmt.Printf("✗ %s (%s)\n", step.Name, duration)
 			failed = true
 		} else {
-			fmt.Printf("✓ %s\n", step.Name)
+			fmt.Printf("✓ %s (%s)\n", step.Name, duration)
 		}
 	}
 
