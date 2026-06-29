@@ -19,7 +19,7 @@ GitHub Actions do under the hood: take a pipeline definition and execute it.
 - If any step fails, gopipe exits with code 1 (a failed build)
 
 ## Usage
-go run .
+```go run .
 ## Example pipeline
 
 ```yaml
