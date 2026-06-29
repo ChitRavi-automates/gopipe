@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"sync"
 	"time"
-
 
 	"gopkg.in/yaml.v3"
 )
@@ -34,26 +34,35 @@ func main() {
 		os.Exit(1)
 	}
 
+	var wg sync.WaitGroup
+	var mu sync.Mutex
 	failed := false
 
 	for _, step := range pipeline.Steps {
-		fmt.Printf("▶ %s\n", step.Name) 
+		wg.Add(1)
 
-		start := time.Now()
+		go func(step Step) {
+			defer wg.Done()
 
-		cmd := exec.Command("bash", "-c", step.Command)
-		output, err := cmd.CombinedOutput()
-		fmt.Println(string(output))
+			start := time.Now()
+			cmd := exec.Command("bash", "-c", step.Command)
+			output, err := cmd.CombinedOutput()
+			duration := time.Since(start)
 
-		duration := time.Since(start)
-
-		if err != nil {
-			fmt.Printf("✗ %s (%s)\n", step.Name, duration)
-			failed = true
-		} else {
-			fmt.Printf("✓ %s (%s)\n", step.Name, duration)
-		}
+			result := fmt.Sprintf("▶ %s\n%s", step.Name, string(output))
+			if err != nil {
+				result += fmt.Sprintf("✗ %s (%s)\n", step.Name, duration)
+				mu.Lock()
+				failed = true
+				mu.Unlock()
+			} else {
+				result += fmt.Sprintf("✓ %s (%s)\n", step.Name, duration)
+			}
+			fmt.Print(result)
+		}(step)
 	}
+
+	wg.Wait()
 
 	if failed {
 		os.Exit(1)
