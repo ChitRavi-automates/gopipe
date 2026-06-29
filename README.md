@@ -1,8 +1,8 @@
 # gopipe
 
 A minimal CI pipeline runner written in Go. gopipe reads a list of steps from a
-YAML file, runs each one as a shell command, and reports whether each step passed
-or failed — exiting non-zero if any step fails, so it can run inside CI.
+YAML file, runs them as shell commands, and reports whether each step passed or
+failed — exiting non-zero if any step fails, so it can run inside CI.
 
 ## Why I built it
 
@@ -14,14 +14,12 @@ GitHub Actions do under the hood: take a pipeline definition and execute it.
 
 - Steps are defined in `pipeline.yaml`
 - gopipe reads and parses the file, then runs each step's command via `bash`
-- Each step reports `✓` on success or `✗` on failure
+- Steps run concurrently as goroutines, synchronized with a `sync.WaitGroup`
+- Each step is timed and reports `✓` on success or `✗` on failure
 - If any step fails, gopipe exits with code 1 (a failed build)
 
 ## Usage
-
-```
-go run .
-``` 
+gorun .
 ## Example pipeline
 
 ```yaml
@@ -34,23 +32,21 @@ steps:
     command: echo hello from gopipe
 ```
 
-Running gopipe against this file runs each step in order and reports the result.
+gopipe runs each step in the file and reports the result, with timing.
 
 ## Project status
 
 Work in progress — built step by step as a Go learning project.
 
-
 ## Roadmap
 
 - [x] Run steps from a YAML pipeline file
 - [x] Report pass/fail and exit non-zero on failure
-- [ ] Time each step
-- [ ] Run steps concurrently with goroutines
+- [x] Time each step
+- [x] Run steps concurrently with goroutines
 - [ ] GitHub Actions CI workflow
 - [ ] Tagged release
 
 ## Tech
 
-Go · YAML (`gopkg.in/yaml.v3`) · `os/exec`
-
+Go · YAML (`gopkg.in/yaml.v3`) · `os/exec` · `sync`
