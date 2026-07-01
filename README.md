@@ -44,8 +44,8 @@ Work in progress — built step by step as a Go learning project.
 - [x] Report pass/fail and exit non-zero on failure
 - [x] Time each step
 - [x] Run steps concurrently with goroutines
-- [ ] GitHub Actions CI workflow
-- [ ] Tagged release
+- [x] GitHub Actions CI workflow
+- [x] Tagged release
 
 ## Tech
 
