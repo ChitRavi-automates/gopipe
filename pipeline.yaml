@@ -5,5 +5,3 @@ steps:
     command: ls -la
   - name: Say hello
     command: echo hello from gopipe
-  - name: Broken step
-    command: exit 1
